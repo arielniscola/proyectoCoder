@@ -1,21 +1,19 @@
-import Carrito from '../models/carrito.js';
-import Producto from '../models/producto.js';
-const carro = new Carrito();
-const producto = new Producto();
+import daos from '../daos/index.js'
 
-const createCarrito = ((req, res) => {
-    const {productos} = req.body;
-    const carrito = new Carrito(productos);
-    carrito.saveCarrito(carrito).then(id => {
-        res.status(201).send({message: `Carrito creado ID: ${id}`})
+const createCarrito = ((req, res) => {    
+    let carrito ={
+        timestamp: Date.now(),
+        productos:  []
+    }
+    daos.carritoDao.save(carrito).then(created => {
+        res.status(201).send({message: `Carrito creado`})
     }).catch(err=> res.status(500).send({message: `Error en el servidor: ${err}`}))
-    
 })
 
 const deleteCarrito = ((req, res) => {
     const id = req.params.id;
 
-    carro.deleteCarrito(id).then(deleted => {
+    daos.carritoDao.delete(id).then(deleted => {
         if(deleted) res.status(200).send({message: `Carrito ID: ${id} eliminado`})
         if(!deleted) res.status(404).send({message: `No se encontro carrido ID: ${id}`})
     }).catch(err => {
@@ -23,39 +21,60 @@ const deleteCarrito = ((req, res) => {
     })
 })
 
-const getProductosCarrito = ((req, res) => {
+const getProductosCarrito = ( async (req, res) => {
     const idCar = req.params.id;
-
-    carro.getProductos(idCar).then((productos) => {
-        res.status(200).json({productos});
-    }).catch(err=> { res.status(500).send({message: `Error en el servidor: ${err}`})})
-
+    let carrito = await daos.carritoDao.get(idCar);
+    let productos = [];
+    
+    for(let i=0; i < carrito.productos.length; i++){
+        let prod = await daos.productoDao.get(carrito.productos[i]);
+       productos.push(prod);
+    }
+    res.status(200).json(productos)
 })
 
 const addProductoCarrito = (async (req, res) => {
     const carritoId = req.params.id;
-    const idsProductos = req.body; //obtengo los id de los productos por body. Arreglo de ID
-    let productoArray = [];
-    //busco los productos por ID
-    await producto.getProductosID(idsProductos.id)
-    .then(result => { productoArray = result})
+    const idProductos = req.body.id; 
+    
+    let producto;
+    let carritoUpdate;
+    //busco el producto por id
+    await daos.productoDao.get(idProductos)
+    .then(result => { producto = result})
     .catch(err=>{console.log(err)});
-    //agrego los productos al carrito
-    carro.addProducto(carritoId, productoArray).then(added => {
-        if(added) res.status(200).json({message: 'Productos agregados correctamente'})
-        if(!added) res.status(404).json({message: 'Productos no agregados'})
+    //busco el carrito completo
+    await daos.carritoDao.get(carritoId)
+    .then(result => { carritoUpdate = result})
+    .catch(err=>{console.log(err)});
+    carritoUpdate.productos.push(producto._id || idProductos)
+    
+    console.log(carritoUpdate);
+    //actualizo carrito
+    daos.carritoDao.update(carritoUpdate, carritoId).then(updated => {
+        if(updated) res.status(200).json({message: 'Productos agregados correctamente'})
+        if(!updated) res.status(404).json({message: 'Productos no agregados'})
     }).catch(err => res.status(500).json({message: `Error en el servidor: ${err}`}))
 })
 
-const deleteProductoCarrito = ((req, res) => {
+const deleteProductoCarrito = (async (req, res) => {
     const idCar = req.params.id;
     const idProd = req.params.id_prod;
+    let carrito;
+    await daos.carritoDao.get(idCar)
+    .then(result => { carrito = result})
+    .catch(err=>{console.log(err)});
 
-    carro.deleteProducto(idCar, idProd).then(deleted => {
-        if(deleted) res.status(200).json({message: 'Producto eliminado'})
-    }).catch(err => {
-        res.status(500).json({message: `Error en el servidor: ${err}` })
-    })
+   for(let i= 0; i < carrito.productos.length; i++){
+    if(carrito.productos[i] == idProd){
+        carrito.productos.splice(i, 1);
+    }
+   }
+    //actualizo carrito
+    daos.carritoDao.update(carrito, idCar).then(updated => {
+        if(updated) res.status(200).json({message: 'Producto eliminado correctamente'})
+        if(!updated) res.status(404).json({message: 'Producto no eliminado'})
+    }).catch(err => res.status(500).json({message: `Error en el servidor: ${err}`}))
 })
 
 export default {

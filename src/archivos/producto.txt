@@ -1,1 +1,21 @@
-[]
+[
+	{
+		"nombre": "cosa",
+		"codigo": "COSA2",
+		"timestamp": 1657492885601,
+		"foto": "asdadsasda",
+		"precio": "123",
+		"stock": "12",
+		"id": 1
+	},
+	{
+		"nombre": "cosa",
+		"descripcion": "esta es la descripcion",
+		"codigo": "COSA2",
+		"timestamp": 1657492885601,
+		"foto": "asdadsasda",
+		"precio": "123",
+		"stock": "12",
+		"id": 2
+	}
+]
