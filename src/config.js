@@ -13,6 +13,9 @@ export default{
     "token_uri": "https://oauth2.googleapis.com/token",
     "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
     "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/firebase-adminsdk-1g80c%40ecommerce-4ea1c.iam.gserviceaccount.com"
-  }
-  
+  },
+  mongoAtlas: {
+    connectionString: "mongodb+srv://admin:<password>@cluster0.z1fv8.mongodb.net/?retryWrites=true&w=majority"
+  },
+  mailAdmin:'arielniscola@gmail' 
 }

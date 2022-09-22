@@ -1,4 +1,3 @@
-import { promises as fs } from "fs";
 import config from '../config.js';
 import mongoose from "mongoose";
 
@@ -6,6 +5,7 @@ import mongoose from "mongoose";
 await mongoose.connect(config.mongo.connectionString);
 
 class ContenedorMongo{
+    
     constructor(nombreColeccion , esquema){
         const schema = mongoose.Schema(esquema)
         this.coleccion = mongoose.model(nombreColeccion, schema)
@@ -36,7 +36,6 @@ class ContenedorMongo{
             return result._id
           
         } catch (error) {
-            console.log(error);
             if(error) return false
         }
       
@@ -57,6 +56,14 @@ class ContenedorMongo{
             return result
         } catch (error) {
             return error
+        }
+    }
+    async getByProperty(prop){
+        try {   
+            const result = await this.coleccion.findOne({prop})
+            return result
+        } catch (error) {
+            return(error)
         }
     }
 }

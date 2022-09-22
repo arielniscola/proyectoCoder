@@ -6,8 +6,8 @@ import productosControllers from '../controllers/producto.js';
 
 api.get('',productosControllers.getProductos);
 api.get('/:id', productosControllers.getProductoID);
-api.post('', adminMiddleware ,productosControllers.addProducto);
-api.put('/:id', adminMiddleware ,productosControllers.updateProducto);
-api.delete('/:id', adminMiddleware ,productosControllers.deleteProducto);
+api.post('', productosControllers.addProducto);
+api.put('/:id', productosControllers.updateProducto);
+api.delete('/:id', productosControllers.deleteProducto);
 
 export default api;
