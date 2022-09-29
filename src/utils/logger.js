@@ -1,12 +1,17 @@
+import { createLogger, transports, format } from 'winston';
+import { fileURLToPath } from 'url';
+import { dirname } from 'path';
 
-const { createLogger, transport, transports, level } = require('winston')
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
-const logger = createLogger({
+
+
+export const logger = createLogger({
   transports: [
-    new transports.Console({ level: 'info' }),
+    new transports.File({ filename: `${__dirname}/../logs/info.log`, level: 'info' }),
     new transports.File({ filename: `${__dirname}/../logs/warn.log`, level: 'warn' }),
     new transports.File({ filename: `${__dirname}/../logs/error.log`, level: 'error' }),
   ],
 })
 
-module.exports = { logger }

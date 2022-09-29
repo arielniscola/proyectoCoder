@@ -12,6 +12,16 @@ class UserDaoMongodb extends ContenedorMongo{
             password: { type: String }
         })
     }
+
+    async getUserMail(email){
+        try {
+            const user = await this.coleccion.findOne(email)
+            return user
+        } catch (error) {
+            return error
+        }
+
+    }
 }
 
 export default UserDaoMongodb

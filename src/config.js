@@ -1,3 +1,6 @@
+import dotenv from 'dotenv';
+dotenv.config();
+
 export default{
   mongo: {
     connectionString: "mongodb://localhost:27017/ecommerce"
@@ -15,7 +18,8 @@ export default{
     "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/firebase-adminsdk-1g80c%40ecommerce-4ea1c.iam.gserviceaccount.com"
   },
   mongoAtlas: {
-    connectionString: "mongodb+srv://admin:<password>@cluster0.z1fv8.mongodb.net/?retryWrites=true&w=majority"
+    connectionString: `mongodb+srv://admin:${process.env.PASSWORD}@cluster0.z1fv8.mongodb.net/?retryWrites=true&w=majority`
   },
-  mailAdmin:'arielniscola@gmail' 
+  mailAdmin:'arielniscola@gmail',
+  numberAdmin: '542615391764'
 }
